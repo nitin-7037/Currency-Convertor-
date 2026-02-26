@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>World Currency Converter</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#1d2671,#c33764);
+  font-family:'Poppins',sans-serif;
+}
+
+/* Glass Card */
+.card{
+  width:380px;
+  padding:30px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(15px);
+  box-shadow:0 25px 50px rgba(0,0,0,0.35);
+  color:#fff;
+  animation:fade 0.8s ease;
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+  font-weight:600;
+}
+
+input,select{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:none;
+  outline:none;
+  font-size:16px;
+  background:rgba(255,255,255,0.25);
+  color:#fff;
+}
+
+select option{color:#000}
+
+.row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.flag{
+  font-size:28px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  font-size:17px;
+  font-weight:600;
+  background:linear-gradient(135deg,#00c6ff,#0072ff);
+  color:#fff;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 10px 20px rgba(0,0,0,0.4);
+}
+
+.result{
+  margin-top:18px;
+  padding:12px;
+  text-align:center;
+  font-size:18px;
+  background:rgba(100, 176, 198, 0.35);
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>🌍 Currency Converter</h2>
+
+  <input type="number" id="amount" placeholder="Enter amount">
+
+  <div class="row">
+    <span class="flag" id="fromFlag"></span>
+    <select id="from"></select>
+  </div>
+
+  <div class="row">
+    <span class="flag" id="toFlag"></span>
+    <select id="to"></select>
+  </div>
+
+  <button onclick="convert()">Convert</button>
+  <div class="result" id="result">Result</div>
+</div>
+
+<script>
+// OFFLINE CURRENCY DATA (Base USD)
+const currencies={
+ USD:{c:"US",r:1},
+ INR:{c:"IN",r:83},
+ EUR:{c:"EU",r:0.92},
+ GBP:{c:"GB",r:0.79},
+ JPY:{c:"JP",r:155},
+ AUD:{c:"AU",r:1.5},
+ CAD:{c:"CA",r:1.36},
+ CNY:{c:"CN",r:7.1},
+ RUB:{c:"RU",r:92},
+ BRL:{c:"BR",r:5.1},
+ AED:{c:"AE",r:3.67},
+ SAR:{c:"SA",r:3.75},
+ SGD:{c:"SG",r:1.34},
+ PKR:{c:"PK",r:280},
+ BDT:{c:"BD",r:110},
+ LKR:{c:"LK",r:305}
+};
+
+// FLAG GENERATOR
+function flag(code){
+  return code.replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt()));
+}
+
+// LOAD DROPDOWNS
+const from=document.getElementById("from");
+const to=document.getElementById("to");
+
+for(let cur in currencies){
+  from.innerHTML+=`<option>${cur}</option>`;
+  to.innerHTML+=`<option>${cur}</option>`;
+}
+
+from.value="USD";
+to.value="INR";
+updateFlags();
+
+function convert(){
+  const amt=document.getElementById("amount").value;
+  if(!amt||amt<=0){alert("Enter valid amount");return;}
+
+  const usd=amt/currencies[from.value].r;
+  const res=(usd*currencies[to.value].r).toFixed(2);
+
+  document.getElementById("result").innerText=
+    `${amt} ${from.value} = ${res} ${to.value}`;
+}
+
+function updateFlags(){
+  document.getElementById("fromFlag").innerText=
+    flag(currencies[from.value].c);
+  document.getElementById("toFlag").innerText=
+    flag(currencies[to.value].c);
+}
+
+from.onchange=updateFlags;
+to.onchange=updateFlags;
+</script>
+
+</body>
+</html>
+
